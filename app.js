@@ -5,6 +5,7 @@ const serve = require('koa-static');
 const logger = require('koa-logger');
 const session = require('koa-session');
 const path = require('path');
+require('dotenv').config();
 
 const app = new Koa();
 const router = new Router();
@@ -28,7 +29,7 @@ const CONFIG = {
 };
 
 // Using the session
-app.keys = ['sa09dfuias09fu'];
+app.keys = [process.env.SECRET];
 app.use(session(CONFIG, app));
 
 // Sqlite3 Database
