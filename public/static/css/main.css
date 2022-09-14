@@ -1,0 +1,27 @@
+@font-face {
+  font-family: 'ui-head';
+  src: url('/static/media/fonts/head/Medium.ttf');
+  font-weight: 500;
+}
+
+* {
+  font-family: 'Inter', 'ui-head', 'Inter', 'Apple Sans',
+    'Segoe UI Variable Display', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: all 0.2s;
+}
+
+.ui-head,
+.ui-head > * {
+  font-family: 'ui-head', 'Inter', 'Apple Sans', 'Segoe UI Variable Display',
+    'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+*::-moz-selection {
+  color: black;
+  background: white;
+}
+
+*::selection {
+  color: black;
+  background: white;
+}

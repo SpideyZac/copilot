@@ -1,0 +1,63 @@
+<header
+  class="
+    w-screen
+    py-5
+    top-0
+    sticky
+    flex
+    items-center
+    justify-between
+    backdrop-blur-lg
+  "
+>
+  <div class="ml-6 w-full flex items-center">
+    <a
+      href="/"
+      onclick="site.push('/');"
+      class="
+        text-2xl
+        font-medium
+        text-transparent
+        bg-clip-text bg-gradient-to-r
+        from-purple-600
+        to-pink-400
+        ui-head
+      "
+      >copilot</a
+    >
+  </div>
+  <nav
+    class="
+      mr-6
+      w-full
+      flex
+      items-center
+      justify-end
+      gap-8
+      text-neutral-300 text-sm
+    "
+  >
+    <a href="/" onclick="site.push('/');" class="hover:text-white">Home</a>
+    <a href="/about" onclick="site.push('/about');" class="hover:text-white"
+      >About</a
+    >
+    <a
+      href="/developer"
+      onclick="site.push('/developer');"
+      class="hover:text-white"
+      >Developer</a
+    >
+    <a
+      href="/login"
+      onclick="site.push('/login');"
+      class="pl-8 border-l-[1px] border-neutral-700 hover:text-white"
+      >Login</a
+    >
+    <a
+      href="/signup"
+      onclick="site.push('/signup');"
+      class="px-4 py-2 rounded-lg bg-white text-black"
+      >Sign Up</a
+    >
+  </nav>
+</header>
