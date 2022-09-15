@@ -95,27 +95,36 @@ router.get('/about', async (ctx) => {
 
 router.get('/login', async (ctx) => {
   await send(ctx, './views/login.html');
+  ctx.session.username = "test"
+  ctx.session.password = "test"
+  ctx.session.id = 0
 });
 
 router.get('/signup', async (ctx) => {
   await send(ctx, './views/signup.html');
 });
 
-var data;
+var data = [];
 
 function set(toset) {
-  data = toset;
+  if (!data.includes(toset)) {
+    data.push(toset);
+  }
 }
 
 router.get('/api/user', async (ctx) => {
   await send(ctx, "./views/blank.html"); 
   if (ctx.session) {
-    if (ctx.session.username && ctx.session.password) {
+    if (ctx.session.username && ctx.session.password && ctx.session.username !== null && ctx.session.password !== null) {
       db.get("select * from user where username=? AND password=?", [ctx.session.username, ctx.session.password], (err, row) => {
         if (err) {
           return;
         }
     
+        if (!row) {
+          return;
+        }
+
         var id = row.id;
 
         db.get(
@@ -148,7 +157,30 @@ router.get('/api/user', async (ctx) => {
 
 router.get('/api/result', async (ctx) => {
   await send(ctx, './views/blank.html')
-  ctx.body = JSON.stringify(data);
+
+  if (ctx.session) {
+    if (ctx.session.id !== undefined && ctx.session.id !== null) {
+      let dontFire = false
+
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].id === ctx.session.id) {
+          ctx.body = JSON.stringify(data[i]);
+          data = data.filter(item => item !== data[i]);
+          dontFire = true
+        }
+      }
+
+      if (!dontFire) {
+        await send(ctx, './views/youdonthavedata.html');
+      }
+    } else {
+      console.log(ctx.session)
+      await send(ctx, './views/usernotloggedin.html');
+    }
+  } else {
+    console.log(ctx.session)
+    await send(ctx, './views/usernotloggedin.html');
+  }
 })
 
 app.use(router.routes());
