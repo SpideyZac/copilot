@@ -95,9 +95,6 @@ router.get('/about', async (ctx) => {
 
 router.get('/login', async (ctx) => {
   await send(ctx, './views/login.html');
-  ctx.session.username = "test"
-  ctx.session.password = "test"
-  ctx.session.id = 0
 });
 
 router.get('/signup', async (ctx) => {
