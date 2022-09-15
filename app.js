@@ -51,26 +51,26 @@ function createDatabase() {
 function createTables(newdb) {
   newdb.exec(`
     CREATE TABLE IF NOT EXISTS userdata (
-      INT id NOT NULL,
-      TEXT assignments,
-      TEXT tests,
-      TEXT projects,
-      TEXT importantdates
+      id int not null,
+      assignments text not null,
+      tests text not null,
+      projects text not null,
+      importantdates text not null
     );
   `);
 
   newdb.exec(`
       CREATE TABLE IF NOT EXISTS user (
-        INT id NOT NULL,
-        TEXT username NOT NULL,
-        TEXT password NOT NULL
+        id int not null,
+        username text not null,
+        password text not null
       )
   `);
 }
 
 var db;
 
-new sqlite3.Database('./copilot.db', sqlite3.OPEN_READWRITE, (err) => {
+db = new sqlite3.Database('./copilot.db', sqlite3.OPEN_READWRITE, (err) => {
   if (err && err.code == 'SQLITE_CANTOPEN') {
     createDatabase();
     return;
@@ -101,28 +101,39 @@ router.get('/signup', async (ctx) => {
   await send(ctx, './views/signup.html');
 });
 
+var data;
+
+function set(toset) {
+  data = toset;
+}
+
 router.get('/api/user', async (ctx) => {
+  await send(ctx, "./views/blank.html"); 
   if (ctx.session) {
-    if (ctx.session.id) {
-      db.each(
-        'SELECT * FROM userdata WHERE id=?',
-        [ctx.session.id],
-        async (err, rows) => {
-          if (err) {
-            await send(ctx, './views/error.html');
-            return;
-          }
-
-          if (rows.length === 0) {
-            await send(ctx, './views/usernotfound.html');
-            return;
-          }
-
-          rows.forEach((row) => {
-            console.log(row.id);
-          });
+    if (ctx.session.username && ctx.session.password) {
+      db.get("select * from user where username=? AND password=?", [ctx.session.username, ctx.session.password], (err, row) => {
+        if (err) {
+          return;
         }
-      );
+    
+        var id = row.id;
+
+        db.get(
+          'select * from userdata where id=?',
+          [id],
+          (error, userdata) => {
+            if (error) {
+              return;
+            }
+
+            if (!userdata) {
+              return;
+            }
+
+            set(userdata);
+          }
+        );
+      })
     } else {
       await send(ctx, './views/usernotloggedin.html');
       return;
@@ -131,7 +142,14 @@ router.get('/api/user', async (ctx) => {
     await send(ctx, './views/usernotloggedin.html');
     return;
   }
+
+  ctx.redirect('/api/result');
 });
+
+router.get('/api/result', async (ctx) => {
+  await send(ctx, './views/blank.html')
+  ctx.body = JSON.stringify(data);
+})
 
 app.use(router.routes());
 app.use(serve(path.join(__dirname, '/public')));
